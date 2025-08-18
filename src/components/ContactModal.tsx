@@ -1,9 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { MapPin, Phone, MessageCircle, Mail, Star, Clock } from 'lucide-react';
+import { MapPin, Phone, MessageCircle, Mail, Star, Clock, ArrowRight } from 'lucide-react';
+import { contactAPI } from '@/services/api';
+import { toast } from '@/components/ui/use-toast';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 interface ContactModalProps {
   business: {
@@ -32,118 +36,199 @@ const ContactModal: React.FC<ContactModalProps> = ({ business, isOpen, onClose }
     window.open(`https://wa.me/${business.whatsapp}`, '_blank');
   };
 
+  const handleViewDetails = () => {
+    window.location.href = `/businesses/${business.id}`;
+    onClose();
+  };
+
   const handleEmail = () => {
     window.open(`mailto:${business.email}`, '_self');
   };
 
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: `Inquiry about ${business?.name || ''}`,
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleInputChange = (e) => {
+    setContactForm({
+      ...contactForm,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmitContact = async (e) => {
+    e.preventDefault();
+    
+    try {
+      setIsSubmitting(true);
+      await contactAPI.contactBusiness(business.id, contactForm);
+      
+      toast({
+        title: 'Message Sent',
+        description: `Your message has been sent to ${business.name}!`,
+      });
+      
+      // Reset form and close modal
+      setContactForm({
+        name: '',
+        email: '',
+        phone: '',
+        subject: `Inquiry about ${business?.name || ''}`,
+        message: ''
+      });
+      onClose();
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to send message',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-gray-800">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white p-6">
+        <DialogHeader className="mb-6">
+          <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">
             {business.name}
           </DialogTitle>
         </DialogHeader>
         
         <div className="space-y-6">
           {/* Business Image */}
-          <div className="relative">
+          <div className="relative rounded-lg overflow-hidden shadow-md">
             <img 
               src={business.image} 
               alt={business.name}
-              className="w-full h-64 object-cover rounded-lg"
+              className="w-full h-64 object-cover"
             />
-            <Badge className="absolute top-3 right-3 bg-orange-500 text-white">
-              {business.category}
-            </Badge>
-          </div>
-
-          {/* Rating and Basic Info */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <Star 
-                  key={i} 
-                  className={`w-5 h-5 ${i < business.rating ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} 
-                />
-              ))}
-              <span className="ml-2 text-gray-600">({business.rating}/5)</span>
+            <div className="absolute top-4 right-4">
+              <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0">
+                {business.category}
+              </Badge>
             </div>
-            <div className="flex items-center text-green-600">
-              <Clock className="w-4 h-4 mr-1" />
-              <span className="text-sm font-medium">Open Now</span>
-            </div>
-          </div>
-
-          {/* Description */}
-          <div>
-            <h4 className="font-semibold text-gray-800 mb-2">About</h4>
-            <p className="text-gray-600">{business.description}</p>
-          </div>
-
-          {/* Location */}
-          <div>
-            <h4 className="font-semibold text-gray-800 mb-2 flex items-center">
-              <MapPin className="w-4 h-4 mr-1" />
-              Location
-            </h4>
-            <p className="text-gray-600 mb-3">{business.address}</p>
             
-            {/* Map Placeholder */}
-            <div className="bg-gray-100 rounded-lg h-40 flex items-center justify-center">
-              <div className="text-center text-gray-500">
-                <MapPin className="w-8 h-8 mx-auto mb-2" />
-                <p>Interactive Map</p>
-                <p className="text-sm">Location: {business.location}</p>
+            {/* Rating Badge */}
+            <div className="absolute bottom-4 left-4">
+              <div className="flex items-center bg-white/90 backdrop-blur-sm rounded-md px-3 py-1 shadow-sm">
+                <Star className="w-4 h-4 text-orange-500 fill-current mr-1" />
+                <span className="text-sm font-medium">{business.rating}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Business Info Section */}
+          <div className="space-y-6">
+            {/* Business Description */}
+            <div>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
+                <div className="w-1 h-5 bg-gradient-to-b from-orange-500 to-red-500 rounded-full mr-2"></div>
+                About
+              </h4>
+              <p className="text-gray-600 mb-4">{business.description}</p>
+              <Button
+                onClick={handleViewDetails}
+                variant="outline"
+                className="w-full bg-white hover:bg-orange-50 border-orange-200 text-orange-600 hover:text-orange-700 group flex items-center justify-center space-x-2 h-10"
+              >
+                <span>View Full Business Details</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </div>
+
+            {/* Location */}
+            <div>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2 flex items-center">
+                <div className="w-1 h-5 bg-gradient-to-b from-orange-500 to-red-500 rounded-full mr-2"></div>
+                <MapPin className="w-4 h-4 mr-2 text-orange-500" />
+                Location
+              </h4>
+              <p className="text-gray-600 mb-3">{business.address}</p>
+              
+              {/* Embedded Google Map */}
+              <div className="rounded-lg overflow-hidden border border-orange-100">
+                <iframe
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(business.address)}&output=embed`}
+                  width="100%"
+                  height="220"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Business Location"
+                />
               </div>
             </div>
           </div>
 
           {/* Contact Options */}
           <div>
-            <h4 className="font-semibold text-gray-800 mb-3">Contact Options</h4>
+            <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+              <div className="w-1 h-5 bg-gradient-to-b from-orange-500 to-red-500 rounded-full mr-2"></div>
+              Contact Options
+            </h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <Button 
                 onClick={handleCall}
-                className="flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white"
+                className="bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600 transition-all duration-200 flex items-center justify-center space-x-2 h-12"
               >
-                <Phone className="w-4 h-4 mr-2" />
-                Call
+                <Phone className="w-4 h-4" />
+                <span>Call</span>
               </Button>
               
               <Button 
                 onClick={handleWhatsApp}
-                className="flex items-center justify-center bg-green-600 hover:bg-green-700 text-white"
+                className="bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 transition-all duration-200 flex items-center justify-center space-x-2 h-12"
               >
-                <MessageCircle className="w-4 h-4 mr-2" />
-                WhatsApp
+                <MessageCircle className="w-4 h-4" />
+                <span>WhatsApp</span>
               </Button>
               
               <Button 
                 onClick={handleEmail}
-                className="flex items-center justify-center bg-gray-600 hover:bg-gray-700 text-white"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-200 flex items-center justify-center space-x-2 h-12"
               >
-                <Mail className="w-4 h-4 mr-2" />
-                Email
+                <Mail className="w-4 h-4" />
+                <span>Email</span>
               </Button>
             </div>
           </div>
 
           {/* Contact Details */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h4 className="font-semibold text-gray-800 mb-3">Contact Details</h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center">
-                <Phone className="w-4 h-4 mr-2 text-gray-500" />
-                <span>{business.phone}</span>
+          <div className="bg-orange-50/50 rounded-lg p-4 border border-orange-100">
+            <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <div className="w-1 h-5 bg-gradient-to-b from-orange-500 to-red-500 rounded-full mr-2"></div>
+              Contact Details
+            </h4>
+            <div className="space-y-3">
+              <div className="flex items-center p-3 bg-white rounded-md border border-orange-100 hover:border-orange-200 transition-colors duration-200">
+                <Phone className="w-5 h-5 text-orange-500 mr-3" />
+                <div>
+                  <p className="text-xs text-orange-600 font-medium">Phone</p>
+                  <p className="text-gray-900">{business.phone}</p>
+                </div>
               </div>
-              <div className="flex items-center">
-                <MessageCircle className="w-4 h-4 mr-2 text-gray-500" />
-                <span>{business.whatsapp}</span>
+              <div className="flex items-center p-3 bg-white rounded-md border border-orange-100 hover:border-orange-200 transition-colors duration-200">
+                <MessageCircle className="w-5 h-5 text-green-500 mr-3" />
+                <div>
+                  <p className="text-xs text-green-600 font-medium">WhatsApp</p>
+                  <p className="text-gray-900">{business.whatsapp}</p>
+                </div>
               </div>
-              <div className="flex items-center">
-                <Mail className="w-4 h-4 mr-2 text-gray-500" />
-                <span>{business.email}</span>
+              <div className="flex items-center p-3 bg-white rounded-md border border-orange-100 hover:border-orange-200 transition-colors duration-200">
+                <Mail className="w-5 h-5 text-blue-500 mr-3" />
+                <div>
+                  <p className="text-xs text-blue-600 font-medium">Email</p>
+                  <p className="text-gray-900 break-all">{business.email}</p>
+                </div>
               </div>
             </div>
           </div>

@@ -1,13 +1,18 @@
-
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
-import { MapPin, User, Building } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'; // Import Select components
+import { MapPin, User, Building, Home } from 'lucide-react';
+import { authAPI } from '@/services/api';
+import { toast } from '@/components/ui/use-toast';
+import { useAuth } from '../contexts/AuthContext';
 
 const SignUp = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [userType, setUserType] = useState<'customer' | 'business' | null>(null);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -22,16 +27,91 @@ const SignUp = () => {
     businessAddress: '',
     businessDescription: ''
   });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Define business categories and Madurai areas
+  const businessCategories = [
+    'Restaurant',
+    'Retail',
+    'Service',
+    'Healthcare',
+    'Education',
+    'Automotive',
+    'Real Estate',
+    'Technology',
+    'Arts & Entertainment',
+    'Other'
+  ];
+
+  const maduraiAreas = [
+    'Anna Nagar',
+    'K.K. Nagar',
+    'Tallakulam',
+    'Goripalayam',
+    'Mattuthavani',
+    'Simmakkal',
+    'Periyar',
+    'Thirunagar',
+    'Villapuram',
+    'Palanganatham',
+    'Bibikulam',
+    'Melur',
+    'Thiruparankundram',
+    'Avaniapuram',
+    'Samayanallur',
+    'Vadipatti',
+    'Alanganallur',
+    'Usilampatti',
+    'Thirumangalam',
+    'Sholavandan'
+  ];
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!userType) return;
+    
     if (formData.password !== formData.confirmPassword) {
-      alert('Passwords do not match!');
+      toast({
+        title: 'Password Mismatch',
+        description: 'Passwords do not match!',
+        variant: 'destructive'
+      });
       return;
     }
-    console.log('Sign up attempted:', { ...formData, userType });
-    // Handle sign up logic here
-    alert(`Account created successfully as ${userType}!`);
+    
+    try {
+      setIsLoading(true);
+      const userData = {
+        ...formData,
+        userType
+      };
+      
+      const response = await authAPI.signup(userData);
+      
+      // Use the login function from AuthContext
+      login(response.data.token, response.data.user);
+      
+      toast({
+        title: 'Registration Successful',
+        description: `Your account has been created successfully!`,
+      });
+      
+      // Redirect business users to the business listing page
+      if (userType === 'business') {
+        navigate('/business-listing');
+      } else {
+        // Redirect regular users to home page
+        navigate('/');
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Registration Failed',
+        description: error.response?.data?.message || 'An error occurred during registration',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -41,9 +121,21 @@ const SignUp = () => {
     });
   };
 
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData({
+      ...formData,
+      [name]: value
+    });
+  };
+
   if (!userType) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
+        <div className="absolute top-4 left-4 z-10">
+          <Button variant="ghost" onClick={() => navigate('/')} className="text-orange-600 hover:text-orange-600 hover:bg-transparent focus:bg-transparent active:bg-transparent">
+            <Home className="w-5 h-5 mr-2" /> Back to Home
+          </Button>
+        </div>
         <div className="w-full max-w-4xl">
           {/* Header */}
           <div className="text-center mb-8">
@@ -51,7 +143,7 @@ const SignUp = () => {
               <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center">
                 <MapPin className="w-8 h-8 text-white" />
               </div>
-              <h1 className="text-3xl font-bold text-gray-800">Madurai Directory</h1>
+              <h1 className="text-3xl font-bold text-gray-800">Urban  <span className="text-orange-600">Pandi</span></h1>
             </div>
             <p className="text-xl text-gray-600">Join our community and start exploring Madurai</p>
           </div>
@@ -59,14 +151,14 @@ const SignUp = () => {
           {/* User Type Selection */}
           <div className="grid md:grid-cols-2 gap-8">
             <Card 
-              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 hover:border-orange-300"
+              className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105 border-2 hover:border-blue-300"
               onClick={() => setUserType('customer')}
             >
               <CardContent className="p-8 text-center">
                 <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <User className="w-10 h-10 text-blue-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">Join as Customer</h3>
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">Join as <span className="text-blue-600">User</span></h3>
                 <p className="text-gray-600 mb-6">
                   Discover amazing businesses in Madurai. Get access to reviews, contact information, and special offers.
                 </p>
@@ -81,14 +173,14 @@ const SignUp = () => {
               onClick={() => setUserType('business')}
             >
               <CardContent className="p-8 text-center">
-                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Building className="w-10 h-10 text-green-600" />
+                <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Building className="w-10 h-10 text-orange-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">Join as Business</h3>
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">Join as <span className="text-orange-600">Business</span></h3>
                 <p className="text-gray-600 mb-6">
                   Grow your business by reaching more customers in Madurai. Create your business profile today.
                 </p>
-                <Button className="bg-green-600 hover:bg-green-700 text-white">
+                <Button className="bg-orange-600 hover:bg-orange-700 text-white">
                   Sign Up as Business
                 </Button>
               </CardContent>
@@ -110,6 +202,11 @@ const SignUp = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
+     <div className="absolute top-4 left-4 z-10">
+          <Button variant="ghost" onClick={() => navigate('/')} className="text-orange-600 hover:text-orange-600 hover:bg-transparent focus:bg-transparent active:bg-transparent">
+            <Home className="w-5 h-5 mr-2" /> Back to Home
+          </Button>
+        </div>
       <div className="w-full max-w-2xl">
         {/* Header */}
         <div className="text-center mb-8">
@@ -117,7 +214,7 @@ const SignUp = () => {
             <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center">
               <MapPin className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-800">Madurai Directory</h1>
+            <h1 className="text-2xl font-bold text-gray-800">Urban <span className="text-orange-600">Pandi</span></h1>
           </div>
           <div className="flex items-center justify-center space-x-2 mb-2">
             {userType === 'customer' ? (
@@ -232,30 +329,44 @@ const SignUp = () => {
                     <label htmlFor="businessCategory" className="block text-sm font-medium text-gray-700 mb-2">
                       Business Category *
                     </label>
-                    <Input
-                      id="businessCategory"
-                      name="businessCategory"
-                      type="text"
-                      required
+                    <Select
+                      onValueChange={(value) => handleSelectChange('businessCategory', value)}
                       value={formData.businessCategory}
-                      onChange={handleInputChange}
-                      placeholder="e.g., Restaurant, Auto Service, Education"
-                    />
+                      required
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {businessCategories.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>
                     <label htmlFor="businessAddress" className="block text-sm font-medium text-gray-700 mb-2">
                       Business Address *
                     </label>
-                    <Input
-                      id="businessAddress"
-                      name="businessAddress"
-                      type="text"
-                      required
+                    <Select
+                      onValueChange={(value) => handleSelectChange('businessAddress', value)}
                       value={formData.businessAddress}
-                      onChange={handleInputChange}
-                      placeholder="Complete business address"
-                    />
+                      required
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select an area in Madurai" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {maduraiAreas.map((area) => (
+                          <SelectItem key={area} value={area}>
+                            {area}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>

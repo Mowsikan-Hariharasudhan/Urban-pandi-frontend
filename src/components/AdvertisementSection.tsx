@@ -8,30 +8,31 @@ const AdvertisementSection = () => {
   const ads = [
     {
       id: 1,
-      title: "Grand Opening Sale!",
-      business: "Madurai Silk Palace",
-      image: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=400&h=300&fit=crop",
+      title: "Cloud Solution",
+      business: "Clofy Technologies",
+      image: "\Screenshot 2025-06-13 210056.png",
       offer: "30% OFF",
-      description: "Traditional silk sarees and fabrics. Grand opening celebration!",
+      description: "Streamline with optimized Microsoft Teams configurations",
       sponsored: true
     },
     {
       id: 2,
-      title: "Best Auto Service",
-      business: "Kumar Auto Works",
-      image: "https://images.unsplash.com/photo-1486718448742-163732cd1544?w=400&h=300&fit=crop",
-      offer: "Free Check-up",
-      description: "Professional auto repair and maintenance services.",
+      title: "Cloud Migration Service",
+      business: "Clofy Technologies",
+      image: "\Screenshot 2025-06-13 210056.png",
+      offer: "25% OFF",
+
+      description: "Streamline with optimized Microsoft Teams configurations",
       sponsored: true
     },
     {
       id: 3,
-      title: "Fresh Food Daily",
-      business: "Madurai Mess",
-      image: "https://images.unsplash.com/photo-1466442929976-97f336a657be?w=400&h=300&fit=crop",
-      offer: "Special Thali ₹120",
-      description: "Authentic South Indian meals and traditional recipes.",
-      sponsored: false
+      title: "SAAS End-to-End Solution",
+      business: "Clofy Technologies",
+      image: "\Screenshot 2025-06-13 210056.png",
+      offer: "40% OFF",
+      description: "Streamline with optimized Microsoft Teams configurations",
+      sponsored: true
     }
   ];
 
@@ -63,7 +64,7 @@ const AdvertisementSection = () => {
                     </Badge>
                   )}
                 </div>
-                <div className="absolute top-3 right-3">
+                 <div className="absolute top-3 right-3">
                   <Badge className="bg-red-500 hover:bg-red-600 text-white text-lg font-bold">
                     {ad.offer}
                   </Badge>
@@ -87,9 +88,9 @@ const AdvertisementSection = () => {
         </div>
 
         <div className="text-center mt-8">
-          <p className="text-gray-500 text-sm">
-            Want to advertise your business? <span className="text-orange-600 font-medium cursor-pointer hover:underline">Contact us</span>
-          </p>
+        <p className="text-center text-gray-600 mt-8 text-lg">
+          Want to advertise your business? <a href="https://wa.me/9363139464" target="_blank" rel="noopener noreferrer" className="text-orange-600 font-medium cursor-pointer hover:underline">Contact us</a>
+        </p>
         </div>
       </div>
     </section>

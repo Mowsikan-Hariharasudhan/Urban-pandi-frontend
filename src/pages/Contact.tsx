@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { contactAPI } from '@/services/api';
+import { toast } from '@/components/ui/use-toast';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -17,12 +19,31 @@ const Contact = () => {
     message: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Contact form submitted:', formData);
-    // Handle form submission here
-    alert('Thank you for your message! We will get back to you soon.');
-    setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+    
+    try {
+      setIsLoading(true);
+      await contactAPI.submitContactForm(formData);
+      
+      toast({
+        title: 'Message Sent',
+        description: 'Thank you for your message! We will get back to you soon.',
+      });
+      
+      // Reset form
+      setFormData({ name: '', email: '', phone: '', subject: '', message: '' });
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.response?.data?.message || 'Failed to send message',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -179,8 +200,8 @@ const Contact = () => {
                       <div>
                         <h3 className="font-semibold text-gray-800">Phone</h3>
                         <p className="text-gray-600">
-                          +91 98765 43210<br />
-                          +91 98765 43211
+                        +91 82482 56275<br />
+                          +91 96293 23252
                         </p>
                       </div>
                     </div>
@@ -196,37 +217,17 @@ const Contact = () => {
                       <div>
                         <h3 className="font-semibold text-gray-800">Email</h3>
                         <p className="text-gray-600">
-                          info@maduraidirectory.com<br />
-                          support@maduraidirectory.com
+                        urbanpandi@gmail.com<br />
+                          support@clofy.com
                         </p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border-orange-200">
-                  <CardContent className="p-6">
-                    <div className="flex items-start space-x-4">
-                      <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-                        <Clock className="w-6 h-6 text-orange-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-800">Business Hours</h3>
-                        <p className="text-gray-600">
-                          Monday - Friday: 9:00 AM - 6:00 PM<br />
-                          Saturday: 9:00 AM - 1:00 PM<br />
-                          Sunday: Closed
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
               </div>
 
-              {/* Map Placeholder */}
-              <div className="bg-gray-200 h-64 rounded-lg flex items-center justify-center">
-                <p className="text-gray-500">Map Integration Coming Soon</p>
-              </div>
+              
             </div>
           </div>
         </div>
