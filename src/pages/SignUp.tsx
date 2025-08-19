@@ -9,6 +9,7 @@ import { MapPin, User, Building, Home } from 'lucide-react';
 import { authAPI } from '@/services/api';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '../contexts/AuthContext';
+import Navigation from '@/components/Navigation';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -130,12 +131,11 @@ const SignUp = () => {
 
   if (!userType) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
-        <div className="absolute top-4 left-4 z-10">
-          <Button variant="ghost" onClick={() => navigate('/')} className="text-orange-600 hover:text-orange-600 hover:bg-transparent focus:bg-transparent active:bg-transparent">
-            <Home className="w-5 h-5 mr-2" /> Back to Home
-          </Button>
-        </div>
+      <>
+        <Navigation />
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
+        
+        
         <div className="w-full max-w-4xl">
           {/* Header */}
           <div className="text-center mb-8">
@@ -197,12 +197,15 @@ const SignUp = () => {
           </div>
         </div>
       </div>
+      </>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
-     <div className="absolute top-4 left-4 z-10">
+    <>
+      <Navigation />
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
+      <div className="absolute top-4 left-4 z-10">
           <Button variant="ghost" onClick={() => navigate('/')} className="text-orange-600 hover:text-orange-600 hover:bg-transparent focus:bg-transparent active:bg-transparent">
             <Home className="w-5 h-5 mr-2" /> Back to Home
           </Button>
@@ -453,6 +456,7 @@ const SignUp = () => {
         </Card>
       </div>
     </div>
+    </>
   );
 };
 

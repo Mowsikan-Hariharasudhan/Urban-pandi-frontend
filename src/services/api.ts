@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-export const API_URL = 'http://localhost:5000/api';
-export const BASE_URL = 'http://localhost:5000'; // New base URL for static assets
+export const API_URL = 'https://urban-pandi-backend.onrender.com/api';
+export const BASE_URL = 'https://urban-pandi-backend.onrender.com'; // New base URL for static assets
 
 const api = axios.create({
   baseURL: API_URL,

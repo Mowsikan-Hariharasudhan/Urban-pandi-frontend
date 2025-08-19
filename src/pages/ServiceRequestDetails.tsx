@@ -133,7 +133,7 @@ const ServiceRequestDetails = () => {
       const token = localStorage.getItem('token'); // Retrieve token from localStorage
       const headers = token ? { Authorization: `Bearer ${token}` } : {}; // Add token to headers if it exists
       // Use the direct API call instead of serviceRequestAPI, using requestId
-      const response = await axios.get(`http://localhost:5000/api/service-requests/${requestId}`, { headers }); // Corrected: Use requestId
+      const response = await axios.get(`https://urban-pandi-backend.onrender.com/api/service-requests/${requestId}`, { headers }); // Corrected: Use requestId
       setRequest(response.data);
     } catch (error) {
       console.error('Error fetching request details:', error);
