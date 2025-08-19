@@ -45,45 +45,45 @@ const GlobalOnboarding: React.FC = () => {
   );
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center px-2 sm:px-0">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={complete} />
-      <div className="relative w-full max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200">
-        <button className="absolute top-3 right-3 p-2 rounded-full hover:bg-gray-100" onClick={complete} aria-label="Close onboarding">
+      <div className="relative w-full max-w-lg sm:max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200">
+        <button className="absolute top-2 right-2 p-2 rounded-full hover:bg-gray-100" onClick={complete} aria-label="Close onboarding">
           <X className="w-5 h-5 text-gray-500" />
         </button>
-        <div className="p-8">
-          <div className="flex items-center gap-3 mb-6">
+        <div className="p-4 sm:p-8">
+          <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
             <Sparkles className="w-6 h-6 text-blue-600" />
-            <h2 className="text-2xl font-bold text-gray-800">Welcome to <span className="text-orange-600">Urban Pandi</span></h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Welcome to <span className="text-orange-600">Urban Pandi</span></h2>
           </div>
-          <p className="text-gray-600 mb-6 leading-relaxed">We connect people who need services with trusted local providers in Madurai. Pick how you want to start. You can switch anytime with the mode toggle.</p>
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            <div className="border rounded-xl p-5 hover:shadow-md transition group">
+          <p className="text-gray-600 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">We connect people who need services with trusted local providers in Madurai. Pick how you want to start. You can switch anytime with the mode toggle.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+            <div className="border rounded-xl p-4 sm:p-5 hover:shadow-md transition group">
               <div className="flex items-center gap-2 mb-2">
                 <span className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">1</span>
-                <h3 className="font-semibold text-gray-800">I Need a Service</h3>
+                <h3 className="font-semibold text-gray-800 text-base sm:text-lg">I Need a Service</h3>
               </div>
-              <ul className="text-sm text-gray-600 space-y-1 mb-3 list-disc list-inside">
+              <ul className="text-xs sm:text-sm text-gray-600 space-y-1 mb-2 sm:mb-3 list-disc list-inside">
                 <li>Browse existing requests</li>
                 <li>Post what you need</li>
                 <li>Get & compare offers</li>
               </ul>
-              <button onClick={goSeeker} className="w-full py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 text-sm">Start as Seeker</button>
+              <button onClick={goSeeker} className="w-full py-2 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 text-xs sm:text-sm">Start as Seeker</button>
             </div>
-            <div className="border rounded-xl p-5 hover:shadow-md transition group">
+            <div className="border rounded-xl p-4 sm:p-5 hover:shadow-md transition group">
               <div className="flex items-center gap-2 mb-2">
                 <span className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center text-orange-600 font-semibold">2</span>
-                <h3 className="font-semibold text-gray-800">I Provide Services</h3>
+                <h3 className="font-semibold text-gray-800 text-base sm:text-lg">I Provide Services</h3>
               </div>
-              <ul className="text-sm text-gray-600 space-y-1 mb-3 list-disc list-inside">
+              <ul className="text-xs sm:text-sm text-gray-600 space-y-1 mb-2 sm:mb-3 list-disc list-inside">
                 <li>Showcase your offerings</li>
                 <li>Send offers to seekers</li>
                 <li>Build reputation (soon)</li>
               </ul>
-              <button onClick={goProvider} className="w-full py-2.5 rounded-lg bg-orange-600 text-white font-medium hover:bg-orange-700 text-sm">Start as Provider</button>
+              <button onClick={goProvider} className="w-full py-2 rounded-lg bg-orange-600 text-white font-medium hover:bg-orange-700 text-xs sm:text-sm">Start as Provider</button>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-xs text-gray-500">
             <Handshake className="w-4 h-4" />
             <span>Tip: Use the mode toggle in the header to switch anytime.</span>
             <span>Need this later? Click Help floating button bottom-left.</span>
