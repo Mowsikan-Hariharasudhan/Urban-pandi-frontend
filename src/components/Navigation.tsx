@@ -47,7 +47,7 @@ const Navigation = () => {
               <h1 className="text-lg sm:text-xl font-bold text-gray-800">Urban <span className="text-orange-600">Pandi</span></h1>
               <p className="text-xs text-gray-600 hidden sm:block">Discover Local Businesses</p>
             </div>
-            <div className="block xs:hidden">
+            <div className="block sm:hidden">
               <h1 className="text-lg font-bold text-gray-800">Urban <span className="text-orange-600">Pandi</span></h1>
             </div>
           </Link>
