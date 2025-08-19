@@ -47,9 +47,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         if (isTokenValid(token)) {
           setUser(userData);
           setIsAuthenticated(true);
-          
-          // Set up periodic token validation
-          startTokenValidationInterval();
+          // No periodic token validation: stay signed in
         } else {
           // Token is expired, clear storage
           localStorage.removeItem('user');
@@ -100,23 +98,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const startTokenValidationInterval = () => {
-    // Check token validity every 5 minutes
-    const interval = setInterval(() => {
-      checkTokenExpiration();
-    }, 10 * 60 * 1000);
-
-    // Clear interval on component unmount
-    return () => clearInterval(interval);
-  };
-
-  const checkTokenExpiration = () => {
-    const token = localStorage.getItem('token');
-    if (token && !isTokenValid(token)) {
-      console.log('Token expired, logging out...');
-      logout();
-    }
-  };
+  // Removed periodic token expiration check for persistent login
 
   const login = (token: string, userData: User) => {
     localStorage.setItem('token', token);
@@ -124,8 +106,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     setUser(userData);
     setIsAuthenticated(true);
     
-    // Start token validation after login
-    startTokenValidationInterval();
+  // No periodic token validation after login
   };
 
   const logout = () => {
