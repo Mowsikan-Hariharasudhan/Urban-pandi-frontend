@@ -45,7 +45,7 @@ const SignUp = () => {
   ];
 
   const maduraiAreas = [
-    "Alagar Kovil Road",
+     "Alagar Kovil Road",
     "Angel Nagar",
     "Anna Nagar",
     "Anuppanadi",
@@ -222,6 +222,11 @@ const SignUp = () => {
       <>
         <Navigation />
         <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
+          {isLoading && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+            </div>
+          )}
         
         
         <div className="w-full max-w-4xl">
@@ -293,7 +298,12 @@ const SignUp = () => {
     <>
       <Navigation />
       <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 flex items-center justify-center p-4">
-      <div className="absolute top-4 left-4 z-10">
+        {isLoading && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+          </div>
+        )}
+        <div className="absolute top-4 left-4 z-10">
           <Button variant="ghost" onClick={() => navigate('/')} className="text-orange-600 hover:text-orange-600 hover:bg-transparent focus:bg-transparent active:bg-transparent">
             <Home className="w-5 h-5 mr-2" /> Back to Home
           </Button>
